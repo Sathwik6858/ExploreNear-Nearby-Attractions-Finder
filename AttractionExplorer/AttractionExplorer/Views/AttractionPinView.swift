@@ -37,7 +37,7 @@ struct AttractionPinView: View {
         }
     }
     
-=
+
     func pinImage(for id: Int) -> String {
         switch id % 3 {
         case 0: return "star.fill"
