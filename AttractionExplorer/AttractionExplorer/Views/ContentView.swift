@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 struct ContentView: View {
     @State var searchText: String = ""
     
@@ -17,6 +18,8 @@ struct ContentView: View {
                     .ignoresSafeArea()
                 VStack{
                     SearchBar(searchText: $searchText, hasCancel: false, action: {print("Search Clicked")}, onCancel: {print("Search cancelled")})                        .padding()
+                        
+                    
                     Spacer()
                 }.padding()
                 

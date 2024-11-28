@@ -16,6 +16,9 @@
 		55263FA32CCB1F0600DEC229 /* Attraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55263FA22CCB1F0600DEC229 /* Attraction.swift */; };
 		55263FA62CCB1FD700DEC229 /* DummyAttractionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55263FA52CCB1FD700DEC229 /* DummyAttractionService.swift */; };
 		55263FA82CCB20B100DEC229 /* AttractionPinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55263FA72CCB20B100DEC229 /* AttractionPinView.swift */; };
+		557C86B62CF8D2E6001E0A09 /* PostGresService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C86B52CF8D2E6001E0A09 /* PostGresService.swift */; };
+		557C86B92CF8D368001E0A09 /* PostgresClientKit in Frameworks */ = {isa = PBXBuildFile; productRef = 557C86B82CF8D368001E0A09 /* PostgresClientKit */; };
+		557C86BB2CF901CB001E0A09 /* DistanceUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C86BA2CF901CB001E0A09 /* DistanceUtilities.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +32,8 @@
 		55263FA22CCB1F0600DEC229 /* Attraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attraction.swift; sourceTree = "<group>"; };
 		55263FA52CCB1FD700DEC229 /* DummyAttractionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyAttractionService.swift; sourceTree = "<group>"; };
 		55263FA72CCB20B100DEC229 /* AttractionPinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttractionPinView.swift; sourceTree = "<group>"; };
+		557C86B52CF8D2E6001E0A09 /* PostGresService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostGresService.swift; sourceTree = "<group>"; };
+		557C86BA2CF901CB001E0A09 /* DistanceUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DistanceUtilities.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				557C86B92CF8D368001E0A09 /* PostgresClientKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,6 +108,8 @@
 			isa = PBXGroup;
 			children = (
 				55263FA52CCB1FD700DEC229 /* DummyAttractionService.swift */,
+				557C86B52CF8D2E6001E0A09 /* PostGresService.swift */,
+				557C86BA2CF901CB001E0A09 /* DistanceUtilities.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -122,6 +130,9 @@
 			dependencies = (
 			);
 			name = AttractionExplorer;
+			packageProductDependencies = (
+				557C86B82CF8D368001E0A09 /* PostgresClientKit */,
+			);
 			productName = AttractionExplorer;
 			productReference = 55263F8B2CCB1A0400DEC229 /* AttractionExplorer.app */;
 			productType = "com.apple.product-type.application";
@@ -150,6 +161,9 @@
 				Base,
 			);
 			mainGroup = 55263F822CCB1A0400DEC229;
+			packageReferences = (
+				557C86B72CF8D368001E0A09 /* XCRemoteSwiftPackageReference "PostgresClientKit" */,
+			);
 			productRefGroup = 55263F8C2CCB1A0400DEC229 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -176,9 +190,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				557C86B62CF8D2E6001E0A09 /* PostGresService.swift in Sources */,
 				55263F9D2CCB1A3F00DEC229 /* AttractionMapView.swift in Sources */,
 				55263FA02CCB1CF800DEC229 /* SearchBar.swift in Sources */,
 				55263FA82CCB20B100DEC229 /* AttractionPinView.swift in Sources */,
+				557C86BB2CF901CB001E0A09 /* DistanceUtilities.swift in Sources */,
 				55263FA32CCB1F0600DEC229 /* Attraction.swift in Sources */,
 				55263FA62CCB1FD700DEC229 /* DummyAttractionService.swift in Sources */,
 				55263F912CCB1A0400DEC229 /* ContentView.swift in Sources */,
@@ -388,6 +404,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		557C86B72CF8D368001E0A09 /* XCRemoteSwiftPackageReference "PostgresClientKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/codewinsdotcom/PostgresClientKit.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		557C86B82CF8D368001E0A09 /* PostgresClientKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 557C86B72CF8D368001E0A09 /* XCRemoteSwiftPackageReference "PostgresClientKit" */;
+			productName = PostgresClientKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 55263F832CCB1A0400DEC229 /* Project object */;
 }

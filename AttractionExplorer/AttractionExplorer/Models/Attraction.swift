@@ -10,9 +10,10 @@ import Foundation
 struct Attraction{
     var attractionID: Int 
     var name: String
-    var lat: Float
-    var long: Float
+    var lat: Double
+    var long: Double
     var zipcode: String
+    var address: String
     var description: String
 }
 
