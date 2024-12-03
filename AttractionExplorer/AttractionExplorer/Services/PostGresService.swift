@@ -11,14 +11,31 @@ import PostgresClientKit
 
 class PostgresConnection {
     //You can find most of this info with the ./conninfo command, also you need to create an admin role with all permissions
-    var hostVal="::1"
-    var databaseName="benashkenazi"
+    var hostVal="localhost"
+    var databaseName="sathwik30"
     var userName="admin"
     var password="adminpass"
-    var portNum=5432
+    var portNum=5431
     
-    
-    
+    func getConnection() -> PostgresClientKit.Connection? {
+            do {
+                var configuration = PostgresClientKit.ConnectionConfiguration()
+                configuration.host = hostVal
+                configuration.database = databaseName
+                configuration.user = userName
+                //configuration.credential = .scramSHA256(password: password)
+                configuration.ssl = false
+                configuration.port = portNum
+
+                let connection = try PostgresClientKit.Connection(configuration: configuration)
+                print("Successfully connected to PostgreSQL database.")
+                return connection
+            } catch {
+                print("Error connecting to PostgreSQL: \(error)")
+                return nil
+            }
+        }
+
     func getAttractionsByZip(zipCode: String) -> [Attraction] {
         var attractions: [Attraction] = []
 
@@ -124,8 +141,6 @@ class PostgresConnection {
         return attractions
     }
 
-    
-
     func getAttractionsByCoordinates(lat: Double, long: Double, radius: Double = 50.0) -> [Attraction] {
         var attractions: [Attraction] = []
 
@@ -182,13 +197,14 @@ class PostgresConnection {
         return attractions
     }
     
-    func addAttractionToFavorites(userString: String, attractionID: Int) {
+    func addAttractionToFavorites(userString: String, attractionID: Int) -> Bool {
         do {
             var configuration = PostgresClientKit.ConnectionConfiguration()
             configuration.host = hostVal
             configuration.database = databaseName
             configuration.user = userName
-            //configuration.credential = .scramSHA256(password: password)
+            // Uncomment the line below if password authentication is required
+            // configuration.credential = .scramSHA256(password: password)
             configuration.ssl = false
             configuration.port = portNum
 
@@ -204,11 +220,14 @@ class PostgresConnection {
             defer { statement.close() }
 
             try statement.execute(parameterValues: [userString, attractionID])
-            print("Attraction \(attractionID) added to favorites for user \(userName).")
+            print("Attraction \(attractionID) added to favorites for user \(userString).")
+            return true // Operation succeeded
         } catch {
             print("Error adding attraction to favorites: \(error)")
+            return false // Operation failed
         }
     }
+
     
     func removeAttractionFromFavorites(userString: String, attractionID: Int) {
         do {
@@ -237,7 +256,65 @@ class PostgresConnection {
             print("Error removing attraction from favorites: \(error)")
         }
     }
+    
+    func addUser(userName: String, password: String, lastName: String, firstName: String, zipCode: String, phoneNumber: String, email: String) {
+            print("Adding user to database: \(userName)")
+            
+            guard let connection = getConnection() else {
+                print("Failed to connect to the database.")
+                return
+            }
+            
+            defer { connection.close() }
+            
+            do {
+                let sql = """
+                INSERT INTO users (user_name, password, last_name, first_name, favorite_zipcode, phone_number, email)
+                VALUES ($1, $2, $3, $4, $5, $6, $7);
+                """
+                let statement = try connection.prepareStatement(text: sql)
+                defer { statement.close() }
+                
+                print("Executing SQL: \(sql)")
+                try statement.execute(parameterValues: [userName, password, lastName, firstName, zipCode, phoneNumber, email])
+                print("User \(userName) created successfully.")
+            } catch {
+                print("Error adding new user: \(error)")
+            }
+        }
 
-}
+        func authenticateUser(userName: String, password: String) -> Bool {
+            print("Authenticating user: \(userName) with password: \(password)")
+            
+            guard let connection = getConnection() else {
+                print("Failed to connect to the database.")
+                return false
+            }
 
+            defer { connection.close() }
 
+            do {
+                let sql = """
+                SELECT COUNT(*) FROM users WHERE user_name = $1 AND password = $2;
+                """
+                let statement = try connection.prepareStatement(text: sql)
+                defer { statement.close() }
+
+                print("Executing SQL: \(sql) with parameters: \(userName), \(password)")
+                let cursor = try statement.execute(parameterValues: [userName, password])
+                defer { cursor.close() }
+
+                if let row = try cursor.next()?.get() {
+                    let count = try row.columns[0].int()
+                    print("Query result: \(count) user(s) found.")
+                    return count > 0
+                } else {
+                    print("No rows returned.")
+                }
+            } catch {
+                print("Error authenticating user: \(error)")
+            }
+
+            return false
+        }
+    }

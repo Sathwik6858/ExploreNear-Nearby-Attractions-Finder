@@ -9,9 +9,18 @@ import SwiftUI
 
 @main
 struct AttractionExplorerApp: App {
+    @StateObject var userSession = UserSessionManager() // Create a shared session manager
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if userSession.isLoggedIn { // Correct way to access `isLoggedIn`
+                MainTabView()
+                    .environmentObject(userSession)
+            } else {
+                LoginView()
+                    .environmentObject(userSession)
+            }
         }
     }
 }
+
