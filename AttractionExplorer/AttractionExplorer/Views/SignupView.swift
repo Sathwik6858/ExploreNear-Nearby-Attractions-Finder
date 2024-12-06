@@ -17,7 +17,7 @@ struct SignupView: View {
     @State private var zipCode = ""
     @State private var showAlert = false
     @State private var successMessage = ""
-    @State private var navigateToLogin = false // Controls navigation
+    @Environment(\.presentationMode) var presentationMode // Dismiss the view
 
     var body: some View {
         VStack {
@@ -76,16 +76,13 @@ struct SignupView: View {
             .background(Color.green)
             .cornerRadius(10)
             .padding(.top)
-            
-            // Navigate back to LoginView when navigateToLogin is true
-            NavigationLink("", destination: LoginView(), isActive: $navigateToLogin)
         }
         .alert(isPresented: $showAlert) {
             Alert(
                 title: Text("Success"),
                 message: Text(successMessage),
                 dismissButton: .default(Text("OK"), action: {
-                    navigateToLogin = true // Trigger navigation
+                    presentationMode.wrappedValue.dismiss() // Dismiss the SignupView
                 })
             )
         }

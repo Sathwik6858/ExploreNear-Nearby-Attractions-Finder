@@ -22,7 +22,7 @@ class PostgresConnection {
                 var configuration = PostgresClientKit.ConnectionConfiguration()
                 configuration.host = hostVal
                 configuration.database = databaseName
-                configuration.user = userName
+                configuration.user = "admin"
                 //configuration.credential = .scramSHA256(password: password)
                 configuration.ssl = false
                 configuration.port = portNum
@@ -93,47 +93,37 @@ class PostgresConnection {
         var attractions: [Attraction] = []
 
         do {
-            var configuration = PostgresClientKit.ConnectionConfiguration()
-            configuration.host = hostVal
-            configuration.database = databaseName
-            configuration.user = userName
-            //configuration.credential = .scramSHA256(password: password)
-            configuration.ssl = false
-            configuration.port = portNum
-
-            let connection = try PostgresClientKit.Connection(configuration: configuration)
+            guard let connection = getConnection() else {
+                print("Failed to connect to the database.")
+                return []
+            }
             defer { connection.close() }
 
             let sql = """
             SELECT a.id, a.name, a.latitude, a.longitude, a.zipcode, a.address, a.description
             FROM attraction_list al
             INNER JOIN attractions a ON al.attraction_id = a.id
-            WHERE al.user_name = '\(userName)';
+            WHERE al.user_name = $1;
             """
             let statement = try connection.prepareStatement(text: sql)
             defer { statement.close() }
 
-            let cursor = try statement.execute()
+            let cursor = try statement.execute(parameterValues: [userName])
             defer { cursor.close() }
 
-            do{
-                for row in cursor {
-                    let columns = try row.get().columns
-                    let attraction = Attraction(
-                        attractionID: try columns[0].int(),
-                        name: try columns[1].string(),
-                        lat: try columns[2].double(),
-                        long: try columns[3].double(),
-                        zipcode: try columns[4].string(),
-                        address: try columns[5].string(),
-                        description: try columns[6].string()
-                    )
-                    attractions.append(attraction)
-                }
-            }catch{
-                print("Error converting vals for attraction id \(error)")
+            for row in cursor {
+                let columns = try row.get().columns
+                let attraction = Attraction(
+                    attractionID: try columns[0].int(),
+                    name: try columns[1].string(),
+                    lat: try columns[2].double(),
+                    long: try columns[3].double(),
+                    zipcode: try columns[4].string(),
+                    address: try columns[5].string(),
+                    description: try columns[6].string()
+                )
+                attractions.append(attraction)
             }
-            
         } catch {
             print("Error retrieving favorite attractions: \(error)")
         }
@@ -199,18 +189,20 @@ class PostgresConnection {
     
     func addAttractionToFavorites(userString: String, attractionID: Int) -> Bool {
         do {
+            // Configure the connection with the admin role
             var configuration = PostgresClientKit.ConnectionConfiguration()
             configuration.host = hostVal
             configuration.database = databaseName
-            configuration.user = userName
-            // Uncomment the line below if password authentication is required
-            // configuration.credential = .scramSHA256(password: password)
+            configuration.user = "admin" // Use the admin role for database operations
+            configuration.credential = .scramSHA256(password: password) // Add admin password if required
             configuration.ssl = false
             configuration.port = portNum
 
+            // Establish connection
             let connection = try PostgresClientKit.Connection(configuration: configuration)
             defer { connection.close() }
 
+            // SQL query to insert into attraction_list table
             let sql = """
             INSERT INTO attraction_list (user_name, attraction_id)
             VALUES ($1, $2)
@@ -219,15 +211,16 @@ class PostgresConnection {
             let statement = try connection.prepareStatement(text: sql)
             defer { statement.close() }
 
+            // Execute the statement with parameters
             try statement.execute(parameterValues: [userString, attractionID])
             print("Attraction \(attractionID) added to favorites for user \(userString).")
             return true // Operation succeeded
         } catch {
+            // Log the error with more detail for debugging
             print("Error adding attraction to favorites: \(error)")
             return false // Operation failed
         }
     }
-
     
     func removeAttractionFromFavorites(userString: String, attractionID: Int) {
         do {
