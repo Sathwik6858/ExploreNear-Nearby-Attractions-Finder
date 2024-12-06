@@ -33,7 +33,7 @@ struct ContentView: View {
                         onCancel: {
                             print("Search cancelled")
                             searchText = "" // Clear the search text
-                            NotificationCenter.default.post(name: .resetSearch, object: nil)
+                            //NotificationCenter.default.post(name: .resetSearch, object: nil)
                         }
                     )
                     .padding() // Add padding for spacing

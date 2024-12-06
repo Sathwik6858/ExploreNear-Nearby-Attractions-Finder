@@ -71,6 +71,8 @@ struct LoginView: View {
                             if userExists {
                                 userSession.currentUserName = userName
                                 userSession.isLoggedIn = true
+                                let userZip = connection.getUserFavoriteZipcode(userName: userName);
+                                PreferencesManager().saveZipcode(userZip ?? "85281")
                             } else {
                                 showAlert = true
                                 errorMessage = "Invalid username or password"

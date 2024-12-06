@@ -11,6 +11,15 @@ import PostgresClientKit
 
 class PostgresConnection {
     //You can find most of this info with the ./conninfo command, also you need to create an admin role with all permissions
+    
+    //Ben's config:
+    /*var hostVal="::1"
+    var databaseName="benashkenazi"
+    var userName="admin"
+    var password="adminpass"
+    var portNum=5432*/
+    
+    //Sathwik's config:
     var hostVal="localhost"
     var databaseName="sathwik30"
     var userName="admin"
@@ -194,7 +203,7 @@ class PostgresConnection {
             configuration.host = hostVal
             configuration.database = databaseName
             configuration.user = "admin" // Use the admin role for database operations
-            configuration.credential = .scramSHA256(password: password) // Add admin password if required
+            //configuration.credential = .scramSHA256(password: password) // Add admin password if required
             configuration.ssl = false
             configuration.port = portNum
 
@@ -309,5 +318,40 @@ class PostgresConnection {
             }
 
             return false
+        }
+    
+        func getUserFavoriteZipcode(userName: String) -> String? {
+            print("Retrieving favorite zipcode for user: \(userName)")
+            
+            guard let connection = getConnection() else {
+                print("Failed to connect to the database.")
+                return nil
+            }
+            
+            defer { connection.close() }
+            
+            do {
+                let sql = """
+                SELECT favorite_zipcode FROM users WHERE user_name = $1;
+                """
+                let statement = try connection.prepareStatement(text: sql)
+                defer { statement.close() }
+                
+                print("Executing SQL: \(sql) with parameter: \(userName)")
+                let cursor = try statement.execute(parameterValues: [userName])
+                defer { cursor.close() }
+                
+                if let row = try cursor.next()?.get() {
+                    let favoriteZipcode = try row.columns[0].string()
+                    print("Favorite zipcode found: \(favoriteZipcode)")
+                    return favoriteZipcode
+                } else {
+                    print("No favorite zipcode found for user.")
+                    return nil
+                }
+            } catch {
+                print("Error retrieving favorite zipcode: \(error)")
+                return nil
+            }
         }
     }

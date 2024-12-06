@@ -20,10 +20,12 @@ struct AttractionMapView: View {
     )
     @State private var showAlert = false
     @State private var alertMessage = ""
-    @State private var attractions = DummyAttractionService.getDummyAttractions()
-    @State private var selectedAttraction: Attraction? // Store selected attraction for adding to favorites
+    @State private var attractions: [Attraction] = []
+    @State private var currentZipcode: String = ""
+    @State private var selectedAttraction: Attraction?
     @State private var showFavoriteAlert = false
-
+    @State private var shouldUpdateRegion = false
+    
     var body: some View {
         ZStack {
             // Map with annotations
@@ -68,6 +70,7 @@ struct AttractionMapView: View {
                 if let selectedAttraction = selectedAttraction {
                     Button(action: {
                         addAttractionToFavorites(attraction: selectedAttraction)
+                        self.selectedAttraction = nil
                     }) {
                         HStack {
                             Image(systemName: "star.fill")
@@ -118,10 +121,24 @@ struct AttractionMapView: View {
                 message: Text("The attraction was successfully added to your favorites."),
                 dismissButton: .default(Text("OK"))
             )
+        }.onAppear {
+            currentZipcode = PreferencesManager.shared.getZipcode() ?? "85281"
+            fetchAttractionsByZip(zipCode: currentZipcode)
+            if let userLocation = locationManager.location {
+                region.center = userLocation.coordinate
+            }
+        }
+        .onChange(of: shouldUpdateRegion) { _ in
+            if let userLocation = locationManager.location {
+                DispatchQueue.main.async {
+                    withAnimation {
+                        region.center = userLocation.coordinate
+                    }
+                }
+            }
         }
     }
 
-    // Fetch attractions by ZIP code
     private func fetchAttractionsByZip(zipCode: String) {
         guard !zipCode.isEmpty else {
             alertMessage = "Please enter a valid ZIP code."
@@ -131,25 +148,37 @@ struct AttractionMapView: View {
 
         let connection = PostgresConnection()
         let newAttractions = connection.getAttractionsByZip(zipCode: zipCode)
-        
+
         if newAttractions.isEmpty {
             alertMessage = "No attractions found for ZIP code \(zipCode)."
             showAlert = true
         } else {
-            self.attractions = newAttractions
-            if let firstAttraction = newAttractions.first {
-                region.center = CLLocationCoordinate2D(latitude: firstAttraction.lat, longitude: firstAttraction.long)
+            DispatchQueue.main.async {
+                self.attractions = newAttractions
+
+                guard let firstAttraction = newAttractions.first else { return }
+
+
+                withAnimation(.easeInOut(duration: 1.0)) {
+                    region = MKCoordinateRegion(
+                        center: CLLocationCoordinate2D(latitude: firstAttraction.lat, longitude: firstAttraction.long),
+                        span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
+                    )
+                }
+                shouldUpdateRegion = true
             }
         }
     }
 
-    // Reset to default attractions
+
     private func resetToDefaultAttractions() {
-        self.attractions = DummyAttractionService.getDummyAttractions()
+        
+        self.attractions = PostgresConnection().getAttractionsByZip(zipCode: "85281")
         if let userLocation = locationManager.location {
             region.center = userLocation.coordinate
         } else {
-            region.center = CLLocationCoordinate2D(latitude: 51.507222, longitude: -0.1275) // Default to London
+            // Default to phoenix
+            region.center = CLLocationCoordinate2D(latitude: 33.448376, longitude: -112.074036)
         }
     }
 
@@ -165,7 +194,7 @@ struct AttractionMapView: View {
         let success = connection.addAttractionToFavorites(userString: sessionManager.currentUserName, attractionID: attraction.attractionID)
 
         if success {
-            selectedAttraction = nil // Clear the selection
+            selectedAttraction = nil 
             showFavoriteAlert = true
         } else {
             alertMessage = "Error adding attraction to favorites."

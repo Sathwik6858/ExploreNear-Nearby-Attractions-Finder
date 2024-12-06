@@ -32,7 +32,7 @@ struct SearchBar: View {
             if !searchText.isEmpty {
                 Button("Cancel") {
                     searchText = ""
-                    onCancel()
+                    //onCancel()
                 }
                 .foregroundColor(.blue)
                 .padding(.trailing, 8)

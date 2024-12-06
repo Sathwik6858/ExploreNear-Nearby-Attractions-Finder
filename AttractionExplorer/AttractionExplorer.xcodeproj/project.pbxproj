@@ -19,6 +19,7 @@
 		557C86B62CF8D2E6001E0A09 /* PostGresService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C86B52CF8D2E6001E0A09 /* PostGresService.swift */; };
 		557C86B92CF8D368001E0A09 /* PostgresClientKit in Frameworks */ = {isa = PBXBuildFile; productRef = 557C86B82CF8D368001E0A09 /* PostgresClientKit */; };
 		557C86BB2CF901CB001E0A09 /* DistanceUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C86BA2CF901CB001E0A09 /* DistanceUtilities.swift */; };
+		55B5B4222D029F1800AA0B07 /* PreferencesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B5B4212D029F1800AA0B07 /* PreferencesManager.swift */; };
 		DCE0A3672CFD24570099AF44 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCE0A3662CFD24570099AF44 /* User.swift */; };
 		DCE0A3692CFD24790099AF44 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCE0A3682CFD24790099AF44 /* LoginView.swift */; };
 		DCE0A36B2CFD249E0099AF44 /* SignupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCE0A36A2CFD249E0099AF44 /* SignupView.swift */; };
@@ -40,6 +41,7 @@
 		55263FA72CCB20B100DEC229 /* AttractionPinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttractionPinView.swift; sourceTree = "<group>"; };
 		557C86B52CF8D2E6001E0A09 /* PostGresService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostGresService.swift; sourceTree = "<group>"; };
 		557C86BA2CF901CB001E0A09 /* DistanceUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DistanceUtilities.swift; sourceTree = "<group>"; };
+		55B5B4212D029F1800AA0B07 /* PreferencesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesManager.swift; sourceTree = "<group>"; };
 		DCE0A3662CFD24570099AF44 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		DCE0A3682CFD24790099AF44 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		DCE0A36A2CFD249E0099AF44 /* SignupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupView.swift; sourceTree = "<group>"; };
@@ -128,6 +130,7 @@
 				557C86B52CF8D2E6001E0A09 /* PostGresService.swift */,
 				557C86BA2CF901CB001E0A09 /* DistanceUtilities.swift */,
 				DCE0A3702CFD54AD0099AF44 /* UserSessionManager.swift */,
+				55B5B4212D029F1800AA0B07 /* PreferencesManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -208,6 +211,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55B5B4222D029F1800AA0B07 /* PreferencesManager.swift in Sources */,
 				DCE0A36B2CFD249E0099AF44 /* SignupView.swift in Sources */,
 				557C86B62CF8D2E6001E0A09 /* PostGresService.swift in Sources */,
 				55263F9D2CCB1A3F00DEC229 /* AttractionMapView.swift in Sources */,
