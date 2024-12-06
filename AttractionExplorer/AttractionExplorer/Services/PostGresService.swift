@@ -13,18 +13,18 @@ class PostgresConnection {
     //You can find most of this info with the ./conninfo command, also you need to create an admin role with all permissions
     
     //Ben's config:
-    /*var hostVal="::1"
+    var hostVal="::1"
     var databaseName="benashkenazi"
     var userName="admin"
     var password="adminpass"
-    var portNum=5432*/
+    var portNum=5432
     
     //Sathwik's config:
-    var hostVal="localhost"
+    /*var hostVal="localhost"
     var databaseName="sathwik30"
     var userName="admin"
     var password="adminpass"
-    var portNum=5431
+    var portNum=5431*/
     
     func getConnection() -> PostgresClientKit.Connection? {
             do {
@@ -354,4 +354,33 @@ class PostgresConnection {
                 return nil
             }
         }
+    
+        func updateUserFavoriteZipcode(userName: String, newZipcode: String) -> Bool {
+            print("Updating favorite zipcode for user: \(userName) to \(newZipcode)")
+            
+            guard let connection = getConnection() else {
+                print("Failed to connect to the database.")
+                return false
+            }
+            
+            defer { connection.close() }
+            
+            do {
+                let sql = """
+                UPDATE users SET favorite_zipcode = $1 WHERE user_name = $2;
+                """
+                let statement = try connection.prepareStatement(text: sql)
+                defer { statement.close() }
+                
+                print("Executing SQL: \(sql) with parameters: \(newZipcode), \(userName)")
+                
+                let result = try statement.execute(parameterValues: [newZipcode, userName])
+                return true
+            } catch {
+                print("Error updating favorite zipcode: \(error)")
+                return false
+            }
+        }
+
+
     }
